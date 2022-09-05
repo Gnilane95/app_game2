@@ -1,14 +1,10 @@
 <!-- header -->
 <?php
-// demarrer session
 session_start();
-$title = "Accueil"; //title for current page
+$title = "Accueil";
 include('partials/_header.php');
-include("helpers/functions.php");
-// include PDO pour la connexion BDD
-require_once("helpers/pdo.php");
-// requette all
-require_once("sql/selectAll-sql.php");
+require_once("models/database.php");
+$games = getAllGames ();
 ?>
 
 <!-- main content -->
