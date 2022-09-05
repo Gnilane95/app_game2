@@ -105,17 +105,30 @@ function delete(): void
     header("location:index.php");
 }
 
-function create()
+/**
+ * This function create an item
+ * @return void 
+ */
+function create($error): void
 {
-    // 1-je verifie si le formulaire est soumis
-if (!empty($_POST["submited"]) && isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] == 0) {
-    //2-je fais les failles xss
-    //3-validation de chaque input
-    require_once("validation-formulaire/include.php");
-    debug_array($error);
-    // //4- if no error
+    $pdo = getPDO() ;
+    require_once("utils/secure-form/include.php");
     if (count($error) == 0) {
-        require_once("sql/addGame-sql.php");
+    $sql = "INSERT INTO jeux(name, price, genre, note, plateforms, description, PEGI, created_at, url_img) VALUES(:name, :price, :genre, :note, :plateforms, :description, :PEGI, NOW(), :url_img)";
+    $query = $pdo->prepare($sql);
+    $query->bindValue(':name', $name, PDO::PARAM_STR);
+    $query->bindValue(':price', $price, PDO::PARAM_STMT);
+    $query->bindValue(':note', $note, PDO::PARAM_STMT);
+    $query->bindValue(':description', $description, PDO::PARAM_STR);
+    $query->bindValue(':genre', implode("|", $genre_clear), PDO::PARAM_STR);
+    $query->bindValue(':plateforms', implode("|", $plateforms_clear), PDO::PARAM_STR);
+    $query->bindValue(':PEGI', $PEGI, PDO::PARAM_STR);
+    $query->bindValue(':url_img', $url_img, PDO::PARAM_STR);
+    $query->execute();
+
+    // Redirect
+    $_SESSION["success"] = "Le jeux a bien été ajouté";
+    header("Location: index.php");
+    die;
     }
-}
 }
