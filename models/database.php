@@ -1,5 +1,5 @@
 <?php
-require("helpers/functions.php");
+require("utils/helpers/functions.php");
 
 /**
  * Get connexion with database
@@ -87,4 +87,35 @@ function getGame(): array
         header("location: index.php");
     }
     return $game ;
+}
+
+/**
+ * This function delete an item
+ * @return void 
+ */
+function delete(): void
+{
+    $pdo = getPDO() ;
+    $id = getID();
+    $sql = "DELETE FROM jeux WHERE id=?";
+    $query = $pdo->prepare($sql);
+    $query->execute([$id]);
+    //Redirect
+    $_SESSION["success"] = "Le jeu es bien supprimer.";
+    header("location:index.php");
+}
+
+function create()
+{
+    // 1-je verifie si le formulaire est soumis
+if (!empty($_POST["submited"]) && isset($_FILES["url_img"]) && $_FILES["url_img"]["error"] == 0) {
+    //2-je fais les failles xss
+    //3-validation de chaque input
+    require_once("validation-formulaire/include.php");
+    debug_array($error);
+    // //4- if no error
+    if (count($error) == 0) {
+        require_once("sql/addGame-sql.php");
+    }
+}
 }
